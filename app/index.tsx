@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, Alert, Platform } from 'react-native';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -14,17 +14,37 @@ export default function App() {
     }
 
     try {
-      const response = await axios.post('http://your-server-ip:5000/download_audio', { youtube_url: youtubeUrl }, {
-        responseType: 'blob'
+      const response = await axios.post('https://yt-audio-backend-fskt.onrender.com/download_audio', { youtube_url: youtubeUrl }, {
+        responseType: Platform.OS === 'web' ? 'blob' : 'arraybuffer'
       });
 
-      const fileUri = `${FileSystem.documentDirectory}${youtubeUrl.split('v=')[1]}.mp3`;
-      await FileSystem.writeAsStringAsync(fileUri, response.data, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
+      if (Platform.OS === 'web') {
+        // Handle download for web
+        const blob = new Blob([response.data], { type: 'audio/mpeg' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${youtubeUrl.split('v=')[1]}.mp3`);
+        document.body.appendChild(link);
+        link.click();
+        
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
 
-      Alert.alert('Success', 'Audio downloaded successfully');
-      await Sharing.shareAsync(fileUri);
+        Alert.alert('Success', 'Audio downloaded successfully');
+      } else {
+        // Handle download for native platforms
+        const base64 = Buffer.from(response.data, 'binary').toString('base64');
+        const fileUri = `${FileSystem.documentDirectory}${youtubeUrl.split('v=')[1]}.mp3`;
+        
+        await FileSystem.writeAsStringAsync(fileUri, base64, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+
+        Alert.alert('Success', 'Audio downloaded successfully');
+        await Sharing.shareAsync(fileUri);
+      }
 
     } catch (error) {
       console.error(error);
