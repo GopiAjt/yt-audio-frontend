@@ -1,5 +1,6 @@
 <template>
-    <p>this is home page</p>
+  <label for="link">input url</label>
+    <input type="text">
 </template>
 <script>
 
