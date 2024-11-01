@@ -1,16 +1,20 @@
 <template>
-  <div>
-    <label for="link">Input URL:</label>
+  <div class="input-sec">
+    <label for="link">Input URL</label>
     <input v-model="link" type="text" placeholder="Enter YouTube URL">
     <button @click="download">Submit</button>
   </div>
+  <LoadingScreen :isVisible="isLoading"></LoadingScreen>
 </template>
 
 <script>
+import LoadingScreen from '@/components/LoadingScreen.vue';
+
 export default {
   data() {
     return {
       link: null,
+      isLoading: false
     };
   },
   methods: {
@@ -21,6 +25,7 @@ export default {
       console.log(data);
 
       try {
+        this.isLoading = true;
         let response = await fetch(`http://127.0.0.1:5000/download_audio`, {
           method: "POST",
           headers: {
@@ -63,11 +68,22 @@ export default {
       } catch (error) {
         console.error("Error during fetch:", error);
       }
+      finally {
+        this.isLoading = false;
+      }
     },
     async startTheApp() {
-      let response = await fetch(`http://127.0.0.1:5000/`);
-      console.log(response);
-      console.log('started!');
+      try {
+        this.isLoading = true;
+        let response = await fetch(`http://127.0.0.1:5000/`);
+        console.log(response);
+        console.log('started!');
+      } catch (error) {
+        console.log(error);
+      }
+      finally {
+        this.isLoading = false;
+      }
     }
   },
   mounted() {
@@ -76,4 +92,11 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.input-sec {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+</style>
