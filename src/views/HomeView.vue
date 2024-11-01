@@ -1,8 +1,10 @@
 <template>
+  <br>
   <div class="input-sec">
-    <label for="link">Input URL</label>
-    <input v-model="link" type="text" placeholder="Enter YouTube URL">
-    <button @click="download">Submit</button>
+    <label for="link" class="form-label">Input URL</label>
+    <input v-model="link" type="text" placeholder="Enter YouTube URL" class="form-control" >
+    <br>
+    <button @click="download" class="btn btn-outline-light">Submit</button>
   </div>
   <LoadingScreen :isVisible="isLoading"></LoadingScreen>
 </template>
@@ -11,6 +13,9 @@
 import LoadingScreen from '@/components/LoadingScreen.vue';
 
 export default {
+  components:{
+    LoadingScreen
+  },
   data() {
     return {
       link: null,
@@ -98,5 +103,7 @@ export default {
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  padding-left: 10%;
+  padding-right: 10%;
 }
 </style>

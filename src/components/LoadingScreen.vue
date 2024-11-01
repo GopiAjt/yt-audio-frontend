@@ -1,7 +1,7 @@
 <template>
     <div v-if="isVisible" class="loading-container">
-        <div>
-            
+        <div class="spinner-grow" style="width: 3rem; height: 3rem; color: white;" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
 </template>
