@@ -31,7 +31,7 @@ export default {
 
       try {
         this.isLoading = true;
-        let response = await fetch(`http://127.0.0.1:5000/download_audio`, {
+        let response = await fetch(`https://yt-audio-backend-fskt.onrender.com/download_audio`, {
           method: "POST",
           headers: {
             'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export default {
     async startTheApp() {
       try {
         this.isLoading = true;
-        let response = await fetch(`http://127.0.0.1:5000/`);
+        let response = await fetch(`https://yt-audio-backend-fskt.onrender.com/`);
         console.log(response);
         console.log('started!');
       } catch (error) {
